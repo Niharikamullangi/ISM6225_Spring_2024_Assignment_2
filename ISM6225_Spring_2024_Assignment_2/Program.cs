@@ -393,20 +393,56 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                if (nums.Length < 2) return 0; // Return 0 if the array length is less than 2
+                if (nums.Length < 2)
+                    return 0;
 
-                Array.Sort(nums); // Sort the array
-                int maxDiff = 0; // Initialize the maximum difference
+                int min = int.MaxValue;
+                int max = int.MinValue;
+                int n = nums.Length;
 
-                // Find the maximum difference between adjacent elements
-                for (int i = 1; i < nums.Length; i++)
+                // Find the minimum and maximum elements in the array
+                foreach (int num in nums)
                 {
-                    if (nums[i] - nums[i - 1] > maxDiff) // If the difference is greater than the current maximum difference
+                    min = Math.Min(min, num);
+                    max = Math.Max(max, num);
+                }
+
+                // Calculate the minimum possible gap
+                int minGap = Math.Max(1, (max - min) / (n - 1));
+
+                // Calculate the number of buckets needed
+                int numBuckets = (max - min) / minGap + 1;
+
+                // Initialize buckets
+                int[] bucketMin = new int[numBuckets];
+                int[] bucketMax = new int[numBuckets];
+                for (int i = 0; i < numBuckets; i++)
+                {
+                    bucketMin[i] = int.MaxValue;
+                    bucketMax[i] = int.MinValue;
+                }
+
+                // Distribute elements into buckets
+                foreach (int num in nums)
+                {
+                    int bucketIndex = (num - min) / minGap;
+                    bucketMin[bucketIndex] = Math.Min(bucketMin[bucketIndex], num);
+                    bucketMax[bucketIndex] = Math.Max(bucketMax[bucketIndex], num);
+                }
+
+                // Calculate the maximum gap
+                int maxDiff = 0;
+                int prevMax = min;
+                for (int i = 0; i < numBuckets; i++)
+                {
+                    if (bucketMin[i] != int.MaxValue)
                     {
-                        maxDiff = nums[i] - nums[i - 1]; // Update the maximum difference
+                        maxGap = Math.Max(maxGap, bucketMin[i] - prevMax);
+                        prevMax = bucketMax[i];
                     }
                 }
-                return maxDiff; // Return the maximum difference
+
+                return maxDiff;// Return the maximum difference
             }
             catch (Exception)
             {
