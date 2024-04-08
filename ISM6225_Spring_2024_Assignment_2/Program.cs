@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  
 YOU ARE NOT ALLOWED TO MODIFY ANY FUNCTION DEFINIDTION's PROVIDED.
 WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
@@ -6,6 +6,7 @@ WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 
 */
 
+using System.Numerics;
 using System.Text;
 
 namespace ISM6225_Spring_2024_Assignment_2
@@ -48,13 +49,13 @@ namespace ISM6225_Spring_2024_Assignment_2
 
             //Question 6:
             Console.WriteLine("Question 6:");
-            int[] nums5 = { 3,6,9,1 };
+            int[] nums5 = { 3, 6, 9, 1 };
             int maxGap = MaximumGap(nums5);
             Console.WriteLine(maxGap);
 
             //Question 7:
             Console.WriteLine("Question 7:");
-            int[] nums6 = { 2,1,2 };
+            int[] nums6 = { 2, 1, 2 };
             int largestPerimeterResult = LargestPerimeter(nums6);
             Console.WriteLine(largestPerimeterResult);
 
@@ -83,7 +84,7 @@ namespace ISM6225_Spring_2024_Assignment_2
         Example 2:
 
         Input: nums = [0,0,1,1,1,2,2,3,3,4]
-        Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]
+        Output: 5, nums = [0,1,2,3,4,,,,,_]
         Explanation: Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively.
         It does not matter what you leave beyond the returned k (hence they are underscores).
  
@@ -99,14 +100,27 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums.Length == 0) return 0; // Handle the edge case where the input array is empty.
+
+                int k = 1; // Initialize index for unique elements.
+
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    // Check if the current element is different from the previous one.
+                    if (nums[i] != nums[i - 1])
+                    {
+                        nums[k] = nums[i]; // If the current element is different, copy it to the next available position for unique elements.
+                        k++; // Increment the position for unique elements.
+                    }
+                }
+                return k; // Finally, return the number of unique values.
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
         /*
         
@@ -134,8 +148,27 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<int>();
+                // Check for null or empty input array
+                if (nums == null || nums.Length == 0)
+                    return new List<int>(); // Return an empty list
+
+                int nonZeroIndex = 0; // Track non-zero elements
+
+                // Move non-zero elements to the beginning of the array
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    if (nums[i] != 0)
+                    {
+                        nums[nonZeroIndex++] = nums[i]; // Move non-zero element
+                    }
+                }
+
+                // Fill remaining positions with zeros
+                for (int i = nonZeroIndex; i < nums.Length; i++)
+                {
+                    nums[i] = 0;
+                }
+                return nums; // Return modified array
             }
             catch (Exception)
             {
@@ -185,8 +218,42 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                // Check for null or insufficient input array length
+                if (nums == null || nums.Length < 3)
+                    return new List<IList<int>>(); // Return an empty list if input is insufficient
+
+                Array.Sort(nums); // Sort the input array
+                IList<IList<int>> result = new List<IList<int>>(); // Initialize the result list
+
+                for (int i = 0; i < nums.Length - 2; i++) // Loop through array elements
+                {
+                    if (i == 0 || nums[i] != nums[i - 1]) // Skip duplicates
+                    {
+                        int left = i + 1, right = nums.Length - 1; // Set pointers
+
+                        while (left < right) // Search for pairs
+                        {
+                            int sum = nums[i] + nums[left] + nums[right]; // Calculate sum
+                            if (sum == 0) // If sum is zero, add to result
+                            {
+                                result.Add(new List<int> { nums[i], nums[left], nums[right] });
+                                while (left < right && nums[left] == nums[left + 1]) left++; // Skip duplicates
+                                while (left < right && nums[right] == nums[right - 1]) right--; // Skip duplicates
+                                left++;
+                                right--;
+                            }
+                            else if (sum < 0) // Adjust pointers based on sum
+                            {
+                                left++;
+                            }
+                            else
+                            {
+                                right--;
+                            }
+                        }
+                    }
+                }
+                return result; // Return the result list
             }
             catch (Exception)
             {
@@ -220,8 +287,29 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check for null or empty input array
+                if (nums == null || nums.Length == 0)
+                    return 0; // Return 0 if input is null or empty
+
+                int maxCount = 0; // Initialize max count of consecutive ones
+                int currentCount = 0; // Initialize current count of consecutive ones
+
+                // Iterate through the array
+                foreach (int num in nums)
+                {
+                    if (num == 1) // If current number is 1
+                    {
+                        currentCount++; // Increment current count of consecutive ones
+                        maxCount = Math.Max(maxCount, currentCount); // Update max count
+                    }
+                    else // If current number is not 1
+                    {
+                        currentCount = 0; // Reset current count
+                    }
+                }
+
+                return maxCount; // Return max count of consecutive ones
+
             }
             catch (Exception)
             {
@@ -232,12 +320,12 @@ namespace ISM6225_Spring_2024_Assignment_2
         /*
 
         Question 5:
-        You are tasked with writing a program that converts a binary number to its equivalent decimal representation without using bitwise operators or the `Math.Pow` function. You will implement a function called `BinaryToDecimal` which takes an integer representing a binary number as input and returns its decimal equivalent. 
+        You are tasked with writing a program that converts a binary number to its equivalent decimal representation without using bitwise operators or the Math.Pow function. You will implement a function called BinaryToDecimal which takes an integer representing a binary number as input and returns its decimal equivalent. 
 
         Requirements:
         1. Your program should prompt the user to input a binary number as an integer. 
-        2. Implement the `BinaryToDecimal` function, which takes the binary number as input and returns its decimal equivalent. 
-        3. Avoid using bitwise operators (`<<`, `>>`, `&`, `|`, `^`) and the `Math.Pow` function for any calculations. 
+        2. Implement the BinaryToDecimal function, which takes the binary number as input and returns its decimal equivalent. 
+        3. Avoid using bitwise operators (<<, >>, &, |, ^) and the Math.Pow function for any calculations. 
         4. Use only basic arithmetic operations such as addition, subtraction, multiplication, and division. 
         5. Ensure the program displays the input binary number and its corresponding decimal value.
 
@@ -256,8 +344,19 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int decimalNum = 0; // Initialize the decimal number
+                int baseValue = 1; // Initialize the base value for binary conversion
+
+                // Convert binary to decimal
+                while (binary > 0)
+                {
+                    int lastDigit = binary % 10; // Get the last digit of the binary number
+                    binary /= 10; // Remove the last digit from the binary number
+                    decimalNum += lastDigit * baseValue; // Update the decimal number
+                    baseValue *= 2; // Update the base value for binary conversion
+                }
+
+                return decimalNum; // Return the decimal representation of the binary number
             }
             catch (Exception)
             {
@@ -294,8 +393,20 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums.Length < 2) return 0; // Return 0 if the array length is less than 2
+
+                Array.Sort(nums); // Sort the array
+                int maxDiff = 0; // Initialize the maximum difference
+
+                // Find the maximum difference between adjacent elements
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    if (nums[i] - nums[i - 1] > maxDiff) // If the difference is greater than the current maximum difference
+                    {
+                        maxDiff = nums[i] - nums[i - 1]; // Update the maximum difference
+                    }
+                }
+                return maxDiff; // Return the maximum difference
             }
             catch (Exception)
             {
@@ -334,7 +445,20 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                Array.Sort(nums); // Sort the array
+
+                // Iterate from the end of the sorted array
+                for (int i = nums.Length - 1; i >= 2; i--)
+                {
+                    // Check if it's possible to form a triangle with current and previous two elements
+                    if (nums[i] < nums[i - 1] + nums[i - 2])
+                    {
+                        // If yes, return the perimeter of the triangle
+                        return nums[i] + nums[i - 1] + nums[i - 2];
+                    }
+                }
+
+                // If no valid triangle can be formed, return 0
                 return 0;
             }
             catch (Exception)
@@ -342,6 +466,7 @@ namespace ISM6225_Spring_2024_Assignment_2
                 throw;
             }
         }
+
 
         /*
 
@@ -388,8 +513,13 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return "";
+                // Remove all occurrences of 'part' from 's'
+                while (s.Contains(part))
+                {
+                    int index = s.IndexOf(part); // Find the index of the leftmost occurrence of 'part'
+                    s = s.Remove(index, part.Length); // Remove 'part' starting from the found index
+                }
+                return s; // Return the modified string
             }
             catch (Exception)
             {
