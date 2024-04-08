@@ -437,7 +437,7 @@ namespace ISM6225_Spring_2024_Assignment_2
                 {
                     if (bucketMin[i] != int.MaxValue)
                     {
-                        maxGap = Math.Max(maxGap, bucketMin[i] - prevMax);
+                        maxDiff = Math.Max(maxDiff, bucketMin[i] - prevMax);
                         prevMax = bucketMax[i];
                     }
                 }
